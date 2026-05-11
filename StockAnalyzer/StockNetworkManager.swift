@@ -234,6 +234,12 @@ class StockNetworkManager: ObservableObject {
                 DispatchQueue.main.async {
                     self.historicalPrices = parsedPrices
                     print("✅ 成功抓取並解析了 \(self.historicalPrices.count) 天的歷史資料！")
+//                    print("🔍 --- Yahoo 歷史資料檢查開始 ---")
+//                    // 使用 suffix(5) 只取陣列最後面的 5 筆資料
+//                    for price in self.historicalPrices.suffix(5) {
+//                        print("📅 日期: \(price.date) | 🔴 收盤: \(String(format: "%.2f", price.close)) | 📈 最高: \(String(format: "%.2f", price.high)) | 📉 最低: \(String(format: "%.2f", price.low))")
+//                    }
+//                    print("🔍 --- Yahoo 歷史資料檢查結束 ---")
                 }
                 
             } catch {
