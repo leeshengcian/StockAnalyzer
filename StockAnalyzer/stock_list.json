@@ -1,0 +1,27 @@
+[
+  {
+    "code": "2330",
+    "name": "台積電",
+    "type": "tse"
+  },
+  {
+    "code": "2317",
+    "name": "鴻海",
+    "type": "tse"
+  },
+  {
+    "code": "2454",
+    "name": "聯發科",
+    "type": "tse"
+  },
+  {
+    "code": "3231",
+    "name": "緯創",
+    "type": "tse"
+  },
+  {
+    "code": "3105",
+    "name": "穩懋",
+    "type": "otc"
+  }
+]
