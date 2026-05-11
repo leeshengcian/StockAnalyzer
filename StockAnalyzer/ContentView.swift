@@ -25,22 +25,24 @@ struct ContentView: View {
         NavigationStack {
             // 使用 List 將過濾後的陣列資料一筆一筆畫出來
             List(filteredStocks) { stock in
-                VStack(alignment: .leading, spacing: 4) {
-                    Text(stock.name)
-                        .font(.headline)
-                    
-                    HStack {
-                        Text(stock.code)
-                            .font(.subheadline)
-                            .foregroundColor(.gray)
+                NavigationLink(destination: StockDetailView(stock: stock)) {
+                    VStack(alignment: .leading, spacing: 4) {
+                        Text(stock.name)
+                            .font(.headline)
                         
-                        // 顯示市場類別標籤
-                        Text(stock.type == "tse" ? "上市" : "上櫃")
-                            .font(.caption)
-                            .padding(.horizontal, 6)
-                            .padding(.vertical, 2)
-                            .background(Color.gray.opacity(0.2))
-                            .cornerRadius(4)
+                        HStack {
+                            Text(stock.code)
+                                .font(.subheadline)
+                                .foregroundColor(.gray)
+                            
+                            // 顯示市場類別標籤
+                            Text(stock.type == "tse" ? "上市" : "上櫃")
+                                .font(.caption)
+                                .padding(.horizontal, 6)
+                                .padding(.vertical, 2)
+                                .background(Color.gray.opacity(0.2))
+                                .cornerRadius(4)
+                        }
                     }
                 }
             }
