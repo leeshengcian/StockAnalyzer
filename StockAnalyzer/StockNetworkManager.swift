@@ -195,7 +195,7 @@ class StockNetworkManager: ObservableObject {
         let symbol = "\(stockNo)\(suffix)"
         
         // 設定網址：range=3mo 代表抓最近三個月，interval=1d 代表日 K 線
-        let urlString = "https://query1.finance.yahoo.com/v8/finance/chart/\(symbol)?range=3mo&interval=1d"
+        let urlString = "https://query1.finance.yahoo.com/v8/finance/chart/\(symbol)?range=6mo&interval=1d"
         
         guard let url = URL(string: urlString) else { return }
         
