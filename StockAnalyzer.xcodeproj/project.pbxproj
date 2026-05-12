@@ -11,7 +11,7 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
-		3CC996012FB1C047006AAD0F /* StockAnalyzer */ = {
+		3C9969402FB2F0710028D951 /* StockAnalyzer */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			path = StockAnalyzer;
 			sourceTree = "<group>";
@@ -32,7 +32,7 @@
 		3CC995F62FB1C047006AAD0F = {
 			isa = PBXGroup;
 			children = (
-				3CC996012FB1C047006AAD0F /* StockAnalyzer */,
+				3C9969402FB2F0710028D951 /* StockAnalyzer */,
 				3CC996002FB1C047006AAD0F /* Products */,
 			);
 			sourceTree = "<group>";
@@ -61,7 +61,7 @@
 			dependencies = (
 			);
 			fileSystemSynchronizedGroups = (
-				3CC996012FB1C047006AAD0F /* StockAnalyzer */,
+				3C9969402FB2F0710028D951 /* StockAnalyzer */,
 			);
 			name = StockAnalyzer;
 			packageProductDependencies = (

@@ -210,6 +210,7 @@ class StockNetworkManager: ObservableObject {
                 guard let result = yahooData.chart.result?.first,
                       let timestamps = result.timestamp,
                       let quote = result.indicators?.quote?.first,
+                      let opens = quote.open,
                       let highs = quote.high,
                       let lows = quote.low,
                       let closes = quote.close else { return }
@@ -221,11 +222,11 @@ class StockNetworkManager: ObservableObject {
                 // 將三個獨立的陣列 (高、低、收) 合併成我們 App 專用的 DailyPrice 陣列
                 for i in 0..<timestamps.count {
                     // 確保高、低、收盤價都有數字 (排除停牌日的空資料)
-                    if let high = highs[i], let low = lows[i], let close = closes[i] {
+                    if let open = opens[i], let high = highs[i], let low = lows[i], let close = closes[i] {
                         let date = Date(timeIntervalSince1970: TimeInterval(timestamps[i]))
                         let dateString = dateFormatter.string(from: date)
                         
-                        let dailyPrice = DailyPrice(date: dateString, high: high, low: low, close: close)
+                        let dailyPrice = DailyPrice(date: dateString, open: open, high: high, low: low, close: close)
                         parsedPrices.append(dailyPrice)
                     }
                 }

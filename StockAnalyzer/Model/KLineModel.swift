@@ -3,6 +3,7 @@ import Foundation
 // 歷史股價的基本模型 (K線)
 struct DailyPrice {
     let date: String
+    let open: Double
     let high: Double
     let low: Double
     let close: Double
@@ -28,6 +29,7 @@ struct ChartIndicators: Codable {
 
 struct ChartQuote: Codable {
     // Yahoo 的資料有時候當天停牌會是 null，所以必須宣告成 [Double?] (有問號)
+    let open: [Double?]?
     let high: [Double?]?
     let low: [Double?]?
     let close: [Double?]?
