@@ -36,6 +36,12 @@ struct StockDetailView: View {
                         .font(.title2)
                         .fontWeight(.bold)
                     
+                    // KD 指標控制卡片
+                    KDCardView(historicalPrices: networkManager.historicalPrices)
+                    
+                    // BIAS 指標
+                    BIASCardView(historicalPrices: networkManager.historicalPrices)
+                    
                     // 威廉指標控制卡片
                     WilliamsRCardView(historicalPrices: networkManager.historicalPrices)
                     
