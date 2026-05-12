@@ -26,14 +26,7 @@ struct WatchlistView: View {
             } else {
                 List(favoriteStocks) { stock in
                     NavigationLink(destination: StockDetailView(stock: stock)) {
-                        HStack {
-                            VStack(alignment: .leading) {
-                                Text(stock.name).font(.headline)
-                                Text(stock.code).font(.subheadline).foregroundColor(.gray)
-                            }
-                            Spacer()
-                            Image(systemName: "star.fill").foregroundColor(.yellow)
-                        }
+                        WatchlistRowView(stock: stock)
                     }
                     // 在自選頁面可以提供左滑刪除功能
                     .swipeActions(edge: .trailing) {
