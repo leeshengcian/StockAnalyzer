@@ -1,64 +1,43 @@
 import SwiftUI
 
 struct ContentView: View {
-    // 綁定我們的網路與資料管理員
-    @StateObject var networkManager = StockNetworkManager()
-    
-    // 儲存使用者在搜尋框輸入的文字
-    @State private var searchText = ""
-    
-    // 計算屬性：根據使用者的搜尋文字，即時過濾股票清單
-    var filteredStocks: [StockTicker] {
-        if searchText.isEmpty {
-            // 如果搜尋框是空的，顯示全部本地股票 [cite: 40]
-            return networkManager.localStockList
-        } else {
-            // 如果有輸入文字，檢查股票「代碼」或「名稱」是否包含該文字
-            return networkManager.localStockList.filter { stock in
-                stock.name.contains(searchText) || stock.code.contains(searchText)
-            }
-        }
-    }
+    @State private var isMenuOpen = false
+    @State private var selectedOption: SidebarOption = .watchlist
     
     var body: some View {
-        // NavigationStack 提供頂部的導覽列與標題 (iOS 16+ 適用)
-        NavigationStack {
-            // 使用 List 將過濾後的陣列資料一筆一筆畫出來
-            List(filteredStocks) { stock in
-                NavigationLink(destination: StockDetailView(stock: stock)) {
-                    VStack(alignment: .leading, spacing: 4) {
-                        Text(stock.name)
-                            .font(.headline)
-                        
-                        HStack {
-                            Text(stock.code)
-                                .font(.subheadline)
-                                .foregroundColor(.gray)
-                            
-                            // 顯示市場類別標籤
-                            Text(stock.type == "tse" ? "上市" : "上櫃")
-                                .font(.caption)
-                                .padding(.horizontal, 6)
-                                .padding(.vertical, 2)
-                                .background(Color.gray.opacity(0.2))
-                                .cornerRadius(4)
+        ZStack(alignment: .leading) {
+            // 主內容區域
+            NavigationStack {
+                Group {
+                    switch selectedOption {
+                    case .search:
+                        // 👇 直接呼叫我們剛拆出去的檔案
+                        StockSearchView()
+                    case .watchlist:
+                        WatchlistView()
+                    case .settings:
+                        Text("設定頁面").font(.title)
+                    }
+                }
+                .navigationTitle(selectedOption.rawValue)
+                .toolbar {
+                    ToolbarItem(placement: .navigationBarLeading) {
+                        Button(action: {
+                            withAnimation(.spring()) { isMenuOpen.toggle() }
+                        }) {
+                            Image(systemName: "line.3.horizontal")
+                                .font(.title3)
+                                .foregroundColor(.primary)
                         }
                     }
                 }
             }
-            .navigationTitle("台股搜尋")
-            // 加上這行，SwiftUI 就會自動幫你生出一個原生的搜尋框！
-            .searchable(text: $searchText, prompt: "輸入股票代碼或名稱")
-        }
-        .onAppear {
-            // 當畫面出現時，呼叫我們寫好的函數來讀取本地 JSON 檔案 [cite: 40]
-//            networkManager.loadLocalStockList()
-//            networkManager.fetchFullStockListFromGovernment()
-            networkManager.loadStocks()
+            .overlay(isMenuOpen ? Color.black.opacity(0.3).ignoresSafeArea() : nil)
+            
+            // 側邊選單
+            SidebarMenuView(isMenuOpen: $isMenuOpen, selectedOption: $selectedOption)
+                .offset(x: isMenuOpen ? 0 : -250)
+                .ignoresSafeArea()
         }
     }
-}
-
-#Preview {
-    ContentView()
 }

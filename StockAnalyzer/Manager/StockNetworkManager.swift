@@ -7,6 +7,7 @@ class StockNetworkManager: ObservableObject {
     @Published var stockData: StockInfo?
     @Published var localStockList: [StockTicker] = []
     @Published var historicalPrices: [DailyPrice] = []
+    static var hasFetchedListThisSession = false
     
     var timer: Timer?
     
@@ -77,6 +78,13 @@ class StockNetworkManager: ObservableObject {
     // 從政府開放資料平台同時抓取「上市」與「上櫃」股票清單
     // 從政府開放資料平台同時抓取「全市場 (含 ETF)」清單
     func fetchFullStockListFromGovernment() {
+        guard !StockNetworkManager.hasFetchedListThisSession else {
+            print("⚡️ 本次啟動已更新過全市場清單，使用快取，跳過網路抓取。")
+            return
+        }
+        // 如果是第一次進來，就把開關打開，確保下次不會再抓
+        StockNetworkManager.hasFetchedListThisSession = true
+        
         // 1. 改用「每日收盤行情」API，涵蓋所有交易商品 (股票 + ETF)
         let twseUrlString = "https://openapi.twse.com.tw/v1/exchangeReport/STOCK_DAY_ALL" // 上市
         let tpexUrlString = "https://www.tpex.org.tw/openapi/v1/tpex_mainboard_quotes"   // 上櫃
