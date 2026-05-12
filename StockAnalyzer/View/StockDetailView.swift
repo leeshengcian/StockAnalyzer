@@ -39,17 +39,20 @@ struct StockDetailView: View {
                     // KD 指標控制卡片
                     KDCardView(historicalPrices: networkManager.historicalPrices)
                     
+                    // MACD 指標控制卡片
+                    MACDCardView(historicalPrices: networkManager.historicalPrices)
+                    
                     // BIAS 指標
                     BIASCardView(historicalPrices: networkManager.historicalPrices)
                     
+                    // Bollinger Bands 指標
+                    BollingerBandsCardView(historicalPrices: networkManager.historicalPrices)
+                    
+                    // 開盤溢價率
+                    PremiumCardView(historicalPrices: networkManager.historicalPrices)
+                    
                     // 威廉指標控制卡片
                     WilliamsRCardView(historicalPrices: networkManager.historicalPrices)
-                    
-                    // MACD 指標控制卡片 (接續在威廉指標下方)
-                    MACDCardView(historicalPrices: networkManager.historicalPrices)
-                    
-                    // 策略雷達：開盤溢價率
-                    PremiumCardView(historicalPrices: networkManager.historicalPrices)
                 }
                 .padding(.horizontal)
                 
