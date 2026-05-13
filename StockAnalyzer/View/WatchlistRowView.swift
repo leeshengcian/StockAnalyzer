@@ -117,7 +117,7 @@ struct WatchlistRowView: View {
                         
                         // [今日收盤 / 現價]
                         VStack(spacing: 2) {
-                            Text("今收").font(.system(size: 9)).foregroundColor(invSubTextColor)
+                            Text("現價").font(.system(size: 9)).foregroundColor(invSubTextColor)
                             Text(String(format: "%.2f", tClose))
                                 .font(.system(size: 13, weight: .bold, design: .rounded))
                                 .foregroundColor(changePrice > 0 ? .red : (changePrice < 0 ? .green : invMainTextColor))
@@ -197,8 +197,13 @@ struct WatchlistRowView: View {
         }
         .padding(.vertical, 4)
         .onAppear {
-            // 畫面一出現，立刻叫自己的管理員去 Yahoo 抓這檔股票的歷史資料
-            networkManager.fetchHistoricalData(stockNo: stock.code, type: stock.type)
+            // 畫面一出現，立刻叫自己的管理員去 Yahoo 抓這檔股票的歷史資料，改用自動更新函數
+//            networkManager.fetchHistoricalData(stockNo: stock.code, type: stock.type)
+            networkManager.startAutoRefresh(stockNo: stock.code, type: stock.type)
+        }
+        .onDisappear {
+            // 🌟 畫面滑走時，停止這檔股票的背景更新
+            networkManager.stopAutoRefresh()
         }
     }
 }

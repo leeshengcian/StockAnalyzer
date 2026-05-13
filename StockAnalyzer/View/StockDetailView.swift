@@ -4,42 +4,66 @@ struct StockDetailView: View {
     let stock: StockTicker
     @StateObject var networkManager = StockNetworkManager()
     
-    // 🔴 1. 新增狀態：用來綁定拉桿的參數 (威廉指標預設常用 14 天)
+    // 用來綁定拉桿的參數 (威廉指標預設常用 14 天)
     @State private var wrPeriod: Double = 14.0
     
     var body: some View {
-        ScrollView { // 使用 ScrollView 避免內容太多被裁切
+        ScrollView {
             VStack(spacing: 20) {
                 
-                // --- 原本的即時股價區塊 ---
-                VStack {
-                    Text(stock.name).font(.largeTitle).fontWeight(.bold)
-                    Text(stock.code).font(.title2).foregroundColor(.gray)
+                // --- 🌟 同步後的即時行情區塊 ---
+                VStack(spacing: 8) {
+                    Text(stock.name)
+                        .font(.largeTitle)
+                        .fontWeight(.bold)
+                    Text(stock.code)
+                        .font(.title3)
+                        .foregroundColor(.secondary)
                     
-                    if let info = networkManager.stockData {
-                        Text("$\(info.z)")
-                            .font(.system(size: 60, weight: .heavy))
-                            .foregroundColor(.red)
-                        Text("累積成交量: \(info.v) 張")
-                            .font(.title3).foregroundColor(.gray)
+                    // 🌟 核心同步：使用與 WatchListRowView 一樣的 tClose 邏輯
+                    if let lastKLine = networkManager.historicalPrices.last {
+                        let currentPrice = lastKLine.close
+                        
+                        VStack(spacing: 4) {
+                            Text("現價") // 👈 明確標示
+                                .font(.caption)
+                                .foregroundColor(.secondary)
+                                .padding(.top, 10)
+                            
+                            Text("$\(String(format: "%.2f", currentPrice))")
+                                .font(.system(size: 60, weight: .heavy, design: .rounded))
+                                .foregroundColor(getPriceColor(currentPrice: currentPrice)) // 動態顏色
+                        }
+                        
+                        // 顯示成交量 (從最後一根 K 線抓取最新累積量)
+                        Text("累積成交量: \(Int(lastKLine.volume)) 張")
+                            .font(.subheadline)
+                            .foregroundColor(.gray)
                     } else {
-                        ProgressView("正在向證交所抓取最新股價...")
+                        // 資料載入中
+                        VStack(spacing: 15) {
+                            ProgressView()
+                            Text("正在計算最新技術指標...")
+                                .font(.caption)
+                                .foregroundColor(.gray)
+                        }
+                        .padding(.top, 20)
                     }
                 }
-                .padding(.bottom, 20)
+                .padding(.bottom, 10)
                 
-                Divider() // 分隔線
+                Divider()
                 
-                // --- 🔴 新增的指標分析區塊 ---
+                // --- 指標分析區塊 (保持模組化) ---
                 VStack(alignment: .leading, spacing: 15) {
                     Text("📊 技術指標分析")
                         .font(.title2)
                         .fontWeight(.bold)
                     
-                    // KD 指標控制卡片
+                    // KD 指標
                     KDCardView(historicalPrices: networkManager.historicalPrices)
                     
-                    // MACD 指標控制卡片
+                    // MACD 指標
                     MACDCardView(historicalPrices: networkManager.historicalPrices)
                     
                     // BIAS 指標
@@ -51,7 +75,7 @@ struct StockDetailView: View {
                     // 開盤溢價率
                     PremiumCardView(historicalPrices: networkManager.historicalPrices)
                     
-                    // 威廉指標控制卡片
+                    // 威廉指標
                     WilliamsRCardView(historicalPrices: networkManager.historicalPrices)
                 }
                 .padding(.horizontal)
@@ -63,11 +87,29 @@ struct StockDetailView: View {
         .navigationTitle(stock.name)
         .navigationBarTitleDisplayMode(.inline)
         .onAppear {
-            networkManager.startFetchingRealTimeData(stockNo: stock.code, type: stock.type)
-            networkManager.fetchHistoricalData(stockNo: stock.code, type: stock.type)
+            // 同時啟動歷史數據抓取 (用於指標計算與現價顯示)
+//            networkManager.fetchHistoricalData(stockNo: stock.code, type: stock.type)
+            networkManager.startAutoRefresh(stockNo: stock.code, type: stock.type)
         }
         .onDisappear {
-            networkManager.stopFetching()
+            // 🌟 離開詳情頁時停止更新
+            networkManager.stopAutoRefresh()
+        }
+    }
+    
+    // 💡 漲跌顏色判斷函數：與昨收比
+    func getPriceColor(currentPrice: Double) -> Color {
+        // 確保至少有兩天的資料 (今天與昨天) 才能比對
+        guard networkManager.historicalPrices.count >= 2 else { return .primary }
+        
+        let yesterdayClose = networkManager.historicalPrices[networkManager.historicalPrices.count - 2].close
+        
+        if currentPrice > yesterdayClose {
+            return .red
+        } else if currentPrice < yesterdayClose {
+            return .green
+        } else {
+            return .primary // 平盤
         }
     }
 }
