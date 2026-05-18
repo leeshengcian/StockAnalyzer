@@ -139,8 +139,13 @@ class StockNetworkManager: ObservableObject {
     // MARK: - Yahoo Finance Historical Data (K線與指標資料)
     
     func fetchHistoricalData(stockNo: String, type: String) {
-        let suffix = type == "tse" ? ".TW" : ".TWO"
-        let symbol = "\(stockNo)\(suffix)"
+        let symbol: String
+        if type == "index" {
+            symbol = stockNo
+        } else {
+            let suffix = type == "tse" ? ".TW" : ".TWO"
+            symbol = "\(stockNo)\(suffix)"
+        }
         
         // 🌟 優化 1：改為抓取 1 年 (1y)，確保 MACD 指標暖機充足
         let urlString = "https://query1.finance.yahoo.com/v8/finance/chart/\(symbol)?range=1y&interval=1d"

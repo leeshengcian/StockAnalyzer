@@ -39,6 +39,9 @@ struct StockDetailView: View {
                         Text("累積成交量: \(Int(lastKLine.volume)) 張")
                             .font(.subheadline)
                             .foregroundColor(.gray)
+                        // 交易紀錄卡片
+                        TradeLedgerCardView(stockCode: stock.code, currentPrice: currentPrice)
+                                                    .padding(.top, 10)
                     } else {
                         // 資料載入中
                         VStack(spacing: 15) {
